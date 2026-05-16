@@ -1,0 +1,32 @@
+{
+  "name": "the-god-gift-crm-backend",
+  "version": "1.0.0",
+  "description": "The God Gift CRM - Backend API",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "excel4node": "^1.8.2",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3",
+    "prisma": "^5.14.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
