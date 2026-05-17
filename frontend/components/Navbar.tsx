@@ -1,6 +1,7 @@
 "use client";
 
-import { Leaf, Sparkles } from "lucide-react";
+import { Leaf, Sparkles, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 export default function Navbar() {
   return (
@@ -17,13 +18,21 @@ export default function Navbar() {
                 The God Gift CRM
               </h1>
               <p className="text-[10px] text-brand-600 font-medium uppercase tracking-wider">
-                Customer Management
+                Admin Dashboard
               </p>
             </div>
           </div>
 
           {/* Right section */}
           <div className="flex items-center gap-2">
+            <Link
+              href="/register"
+              target="_blank"
+              className="flex items-center gap-1.5 bg-white text-gray-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-200 hover:border-brand-300 hover:text-brand-700 transition-colors shadow-sm"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Customer Form
+            </Link>
             <div className="hidden sm:flex items-center gap-1.5 bg-brand-50 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-brand-200">
               <Sparkles className="w-3.5 h-3.5" />
               Pro Dashboard
