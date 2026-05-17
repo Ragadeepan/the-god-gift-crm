@@ -1,11 +1,10 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
+// Always use relative /api — works in both local dev and Vercel production
 const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: "/api",
   headers: { "Content-Type": "application/json" },
-  timeout: 10000,
+  timeout: 15000,
 });
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -122,7 +121,7 @@ export const customerApi = {
 
 export const exportApi = {
   downloadExcel: () => {
-    const url = `${API_URL}/api/export/excel`;
+    const url = `/api/export/excel`;
     const link = document.createElement("a");
     link.href = url;
     link.download = `GodGift-CRM-${new Date().toISOString().split("T")[0]}.xlsx`;
