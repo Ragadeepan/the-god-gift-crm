@@ -7,7 +7,7 @@ import {
   TrendingUp, ThumbsUp, Eye, Users, Heart, Star, Shield,
 } from "lucide-react";
 import { customerApi } from "@/services/api";
-import { isValidWhatsAppNumber, isValidInstagramUrl } from "@/lib/utils";
+import { isValidWhatsAppNumber } from "@/lib/utils";
 
 type Step = "phone" | "details" | "done";
 type PopupType = "existing" | "success" | null;
@@ -298,19 +298,24 @@ export default function CustomerRegisterPage() {
     setStep("details");
   };
 
+  const buildInstagramUrl = (username: string) => {
+    const u = username.trim().replace(/^@/, "").replace(/^(https?:\/\/)?(www\.)?instagram\.com\//, "");
+    return u ? `https://instagram.com/${u}` : undefined;
+  };
+
   const handleSubmit = async () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim() || name.trim().length < 2)
       newErrors.name = "Please enter your name (min 2 chars)";
-    if (instagram && !isValidInstagramUrl(instagram))
-      newErrors.instagram = "Enter a valid Instagram URL";
+    if (instagram.trim() && !/^[a-zA-Z0-9_.]{1,30}$/.test(instagram.trim().replace(/^@/, "")))
+      newErrors.instagram = "Enter a valid Instagram username";
     if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
     setSubmitting(true);
     try {
       await customerApi.create({
         whatsappNumber: phone.replace(/\s+/g, ""),
         name: name.trim(),
-        instagramLink: instagram.trim() || undefined,
+        instagramLink: buildInstagramUrl(instagram),
       });
       setPopup("success");
     } catch (err: unknown) {
@@ -806,28 +811,55 @@ export default function CustomerRegisterPage() {
                 {/* Instagram */}
                 <div className="mb-4">
                   <label className="block text-[10px] font-black text-purple-400 uppercase tracking-widest mb-1.5 ml-1">
-                    Instagram Page{" "}
+                    Instagram Username{" "}
                     <span className="text-white/25 normal-case font-normal">(optional)</span>
                   </label>
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-                      style={{ color: focusedInput === "ig" ? "#f472b6" : "rgba(255,255,255,0.3)", transition: "color 0.2s" }}>
-                      <Instagram className="w-4 h-4" />
+                  <div className="relative flex items-center rounded-2xl overflow-hidden"
+                    style={{
+                      border: `1.5px solid ${errors.instagram ? "rgba(252,165,165,0.8)" : focusedInput === "ig" ? "rgba(168,85,247,0.9)" : "rgba(255,255,255,0.15)"}`,
+                      boxShadow: focusedInput === "ig" && !errors.instagram ? "0 0 0 3px rgba(168,85,247,0.2), 0 0 20px rgba(168,85,247,0.15)" : "none",
+                      transition: "border-color 0.2s, box-shadow 0.2s",
+                    }}>
+                    {/* Prefix */}
+                    <div className="flex items-center gap-1.5 px-3 h-[52px] flex-shrink-0 select-none"
+                      style={{ background: "rgba(244,114,182,0.12)", borderRight: "1px solid rgba(255,255,255,0.1)" }}>
+                      <Instagram className="w-3.5 h-3.5" style={{ color: focusedInput === "ig" ? "#f472b6" : "rgba(255,255,255,0.4)" }} />
+                      <span className="text-xs font-bold" style={{ color: focusedInput === "ig" ? "#f9a8d4" : "rgba(255,255,255,0.35)" }}>
+                        instagram.com/
+                      </span>
                     </div>
+                    {/* Username input */}
                     <input
-                      type="url"
-                      inputMode="url"
-                      placeholder="https://instagram.com/yourpage"
+                      type="text"
+                      inputMode="text"
+                      placeholder="your_username"
                       value={instagram}
-                      onChange={(e) => { setInstagram(e.target.value); setErrors((p) => ({ ...p, instagram: "" })); }}
+                      onChange={(e) => { setInstagram(e.target.value.replace(/^@/, "")); setErrors((p) => ({ ...p, instagram: "" })); }}
                       onFocus={() => setFocusedInput("ig")}
                       onBlur={() => setFocusedInput(null)}
-                      className="reg-inp"
-                      style={inputStyle("ig", !!errors.instagram)}
-                      autoComplete="url"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      autoComplete="username"
+                      style={{
+                        flex: 1,
+                        height: "52px",
+                        background: focusedInput === "ig" ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)",
+                        border: "none",
+                        outline: "none",
+                        padding: "0 14px",
+                        color: "white",
+                        fontSize: "15px",
+                        fontWeight: "600",
+                        caretColor: "white",
+                        fontFamily: "inherit",
+                        transition: "background 0.2s",
+                      }}
                     />
                   </div>
                   {errors.instagram && <p className="text-xs text-red-300 font-semibold mt-1 ml-1 fade-up">{errors.instagram}</p>}
+                  {instagram && !errors.instagram && (
+                    <p className="text-xs text-white/30 mt-1 ml-1">instagram.com/{instagram}</p>
+                  )}
                 </div>
 
                 {errors.submit && (
