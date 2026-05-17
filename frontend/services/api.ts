@@ -68,17 +68,23 @@ export const customerApi = {
   },
 
   checkByPhone: async (phone: string): Promise<CheckCustomerResponse> => {
-    try {
-      const { data } = await api.get<CheckCustomerResponse>(
-        `/customers/${encodeURIComponent(phone)}`
-      );
-      return data;
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        return { success: true, exists: false };
+    // Try all common Indian phone formats in parallel — matches regardless of how it was stored
+    const digits = phone.replace(/\D/g, "");
+    const ten = digits.slice(-10);
+    const variants = [...new Set([phone.trim(), ten, `+91${ten}`, `91${ten}`])];
+
+    const results = await Promise.allSettled(
+      variants.map((v) =>
+        api.get<CheckCustomerResponse>(`/customers/${encodeURIComponent(v)}`)
+      )
+    );
+
+    for (const r of results) {
+      if (r.status === "fulfilled" && r.value.data?.exists) {
+        return r.value.data;
       }
-      throw err;
     }
+    return { success: true, exists: false };
   },
 
   create: async (payload: CustomerPayload) => {
