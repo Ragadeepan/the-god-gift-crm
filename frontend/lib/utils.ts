@@ -29,9 +29,12 @@ export function normalizePhone(phone: string): string {
 
 export function isValidInstagramUrl(url: string): boolean {
   if (!url) return true;
-  const igRegex =
-    /^(https?:\/\/)?(www\.)?instagram\.com\/[a-zA-Z0-9_.]+\/?$/;
-  return igRegex.test(url);
+  try {
+    const u = new URL(url.startsWith("http") ? url : `https://${url}`);
+    return u.hostname === "instagram.com" || u.hostname === "www.instagram.com";
+  } catch {
+    return false;
+  }
 }
 
 export function isValidWhatsAppNumber(phone: string): boolean {

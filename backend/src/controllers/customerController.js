@@ -41,14 +41,30 @@ const getAllCustomers = async (req, res, next) => {
   }
 };
 
+// Normalise a phone number to its digits-only 10-digit core (Indian numbers)
+function phoneVariants(raw) {
+  const digits = raw.replace(/\D/g, "");
+  // Last 10 digits — handles 8015130707, 918015130707, +918015130707 etc.
+  const ten = digits.slice(-10);
+  return [
+    raw,            // exactly as typed
+    ten,            // 10-digit
+    `+91${ten}`,    // +91XXXXXXXXXX
+    `91${ten}`,     // 91XXXXXXXXXX
+    `0${ten}`,      // 0XXXXXXXXXX
+  ];
+}
+
 // GET /api/customers/:phone — find by WhatsApp number
 const getCustomerByPhone = async (req, res, next) => {
   try {
     const { phone } = req.params;
     const normalizedPhone = phone.replace(/\s+/g, "").trim();
 
-    const customer = await prisma.customer.findUnique({
-      where: { whatsappNumber: normalizedPhone },
+    const customer = await prisma.customer.findFirst({
+      where: {
+        whatsappNumber: { in: phoneVariants(normalizedPhone) },
+      },
     });
 
     if (!customer) {
