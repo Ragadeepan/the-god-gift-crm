@@ -49,6 +49,7 @@
     position: fixed;
     inset: 0;
     z-index: -2;
+    background-color: #e8f5e9;
     background-image: url("/bg.jpg");
     background-size: cover;
     background-position: center center;

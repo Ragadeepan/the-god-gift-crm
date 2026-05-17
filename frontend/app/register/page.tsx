@@ -406,6 +406,7 @@ export default function CustomerRegisterPage() {
       {/* Full-screen background */}
       <div className="min-h-screen relative overflow-hidden flex flex-col"
         style={{
+          backgroundColor: "#0f0524",
           backgroundImage: "url('/register-bg.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center top",
