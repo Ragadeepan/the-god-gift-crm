@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, CSSProperties } from "react";
 import {
-  Phone, User, Instagram, CheckCircle2, ArrowRight,
+  Phone, User, Instagram, CheckCircle2,
   Sparkles, Gift, MessageCircle, Star, Zap, Heart,
   Loader2, ChevronRight, X, Send
 } from "lucide-react";
@@ -242,7 +242,7 @@ export default function CustomerRegisterPage() {
     }
   };
 
-  const particles = [
+  const particles: CSSProperties[] = [
     { width: 8, height: 8, background: "#a78bfa", top: "10%", left: "8%", animationDelay: "0s", animationDuration: "6s" },
     { width: 12, height: 12, background: "#34d399", top: "20%", right: "10%", animationDelay: "1s", animationDuration: "8s" },
     { width: 6, height: 6, background: "#fbbf24", top: "60%", left: "5%", animationDelay: "2s", animationDuration: "7s" },
@@ -337,7 +337,7 @@ export default function CustomerRegisterPage() {
 
         {/* Floating particles */}
         {particles.map((p, i) => (
-          <Particle key={i} style={{ ...p, position: "absolute", style: `--duration: ${p.animationDuration}` } as React.CSSProperties} />
+          <Particle key={i} style={{ ...p, position: "absolute" }} />
         ))}
 
         {/* Content */}
